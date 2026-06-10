@@ -123,3 +123,4 @@ Registra cada transacción con datos del usuario y la prenda embebidos directame
 
 - **Luis Angel Matarrita Hernandez**
 - **Nicole Angulo Segura**
+- **Nicole Angulo Segura**
