@@ -124,3 +124,37 @@ Registra cada transacción con datos del usuario y la prenda embebidos directame
 - **Luis Angel Matarrita Hernandez**
 - **Nicole Angulo Segura**
 - **Nicole Angulo Segura**
+
+
+## Cómo ejecutar
+
+### Requisitos
+- MongoDB 8.0+
+- mongosh
+
+### Cargar la base de datos
+```bash
+mongosh database/database.js
+```
+
+### Consultar los datos manualmente
+```bash
+mongosh
+```
+
+Una vez dentro de mongosh:
+```js
+use tienda_ropa
+
+// Ver todas las ventas
+db.ventas.find().pretty()
+
+// Ver todas las marcas
+db.marcas.find().pretty()
+
+// Ver todas las prendas
+db.prendas.find().pretty()
+
+// Ver todos los usuarios
+db.usuarios.find().pretty()
+```
