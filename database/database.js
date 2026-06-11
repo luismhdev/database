@@ -608,7 +608,7 @@ db.ventas.deleteOne({
 // por fecha, y filtra los resultados para mostrar solo las ventas
 // realizadas en una fecha específica (2024-03-15).
 print("\n--- Consulta 1: Cantidad vendida por prenda en fecha 2024-03-15 ---");
-db.ventas.aggregate([
+printjson(db.ventas.aggregate([
   { $match: { estado: "Completada" } },
   {
     $group: {
@@ -631,13 +631,13 @@ db.ventas.aggregate([
     }
   },
   { $sort: { cantidadVendida: -1 } }
-]);
+]).toArray());
 
 // Obtiene el listado de todas las marcas distintas que tienen
 // al menos una venta registrada con estado "Completada",
 // junto con el número total de transacciones por marca.
 print("\n--- Consulta 2: Marcas con al menos una venta ---");
-db.ventas.aggregate([
+printjson(db.ventas.aggregate([
   { $match: { estado: "Completada" } },
   {
     $group: {
@@ -653,13 +653,13 @@ db.ventas.aggregate([
     }
   },
   { $sort: { marca: 1 } }
-]);
+]).toArray());
 
 // Cruza la colección prendas con ventas para mostrar cada prenda
 // que ha sido vendida al menos una vez, indicando el total de
 // unidades vendidas y la cantidad restante disponible en stock.
 print("\n--- Consulta 3: Prendas vendidas y stock restante ---");
-db.prendas.aggregate([
+printjson(db.prendas.aggregate([
   {
     $lookup: {
       from: "ventas",
@@ -696,13 +696,13 @@ db.prendas.aggregate([
     }
   },
   { $sort: { totalVendido: -1 } }
-]);
+]).toArray());
 
 // Agrupa todas las ventas completadas por marca, suma las unidades
 // vendidas y retorna únicamente las 5 marcas con mayor volumen
 // de ventas, ordenadas de mayor a menor.
 print("\n--- Consulta 4: Top 5 marcas más vendidas ---");
-db.ventas.aggregate([
+printjson(db.ventas.aggregate([
   { $match: { estado: "Completada" } },
   {
     $group: {
@@ -719,4 +719,4 @@ db.ventas.aggregate([
       totalUnidadesVendidas: 1
     }
   }
-]);
+]).toArray());
