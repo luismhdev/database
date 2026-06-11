@@ -132,16 +132,15 @@ Registra cada transacción con datos del usuario y la prenda embebidos directame
 - MongoDB 8.0+
 - mongosh
 
-### Cargar la base de datos
+### 1. Cargar la base de datos
 ```bash
 mongosh database/database.js
 ```
 
-### Consultar los datos manualmente
+### 2. Consultar datos manualmente
 ```bash
 mongosh
 ```
-
 Una vez dentro de mongosh:
 ```js
 use tienda_ropa
@@ -158,3 +157,10 @@ db.prendas.find().pretty()
 // Ver todos los usuarios
 db.usuarios.find().pretty()
 ```
+
+### 3. Ver datos visualmente con MongoDB Compass
+- Abrí MongoDB Compass
+- En el campo URI ingresá: `mongodb://localhost:27017`
+- Clic en **Connect**
+- En el panel izquierdo abrí **tienda_ropa**
+- Entrá a cada colección para ver los documentos
