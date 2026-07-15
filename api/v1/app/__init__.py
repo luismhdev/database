@@ -1,13 +1,17 @@
+import os
+
 from bson import ObjectId
 from bson.errors import InvalidId
+from dotenv import load_dotenv
 from flask import Flask
 from pymongo import MongoClient
 
-MONGO_URI = "mongodb://localhost:27017/"
-DB_NAME = "tienda_ropa"
+load_dotenv()
+
+MONGO_URI = os.environ["MONGO_URI"]
 
 client = MongoClient(MONGO_URI)
-db = client[DB_NAME]
+db = client.get_default_database()
 
 
 class BaseModel:
@@ -66,6 +70,10 @@ class BaseModel:
 
 def create_app():
     app = Flask(__name__)
+
+    from app.auth import require_token
+
+    app.before_request(require_token)
 
     from app.index import register_blueprints
 

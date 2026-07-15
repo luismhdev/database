@@ -128,10 +128,12 @@ Parte 2 del proyecto: una API REST en Python (Flask + PyMongo) que expone la bas
 ```
 api/
   v1/
+    .env.example
     run.py
     app/
       index.py
       __init__.py
+      auth.py
       controllers/
         usuarios.py
         marcas.py
@@ -145,19 +147,52 @@ api/
         venta.py
 ```
 
-Cada colección tiene su propio modelo (maneja la conexión y las queries a MongoDB con PyMongo) y su propio controlador (maneja la lógica de los endpoints con Flask). Los reportes agregan datos entre colecciones y viven en `controllers/reportes.py`.
+Cada colección tiene su propio modelo (maneja la conexión y las queries a MongoDB con PyMongo) y su propio controlador (maneja la lógica de los endpoints con Flask). Los reportes agregan datos entre colecciones y viven en `controllers/reportes.py`. `auth.py` contiene el middleware de autenticación por Bearer token.
+
+### Configuración
+
+La API lee su configuración desde un archivo `.env` (no se sube al repo, está en `.gitignore`) ubicado en `api/v1/`. Creá el tuyo a partir de `api/v1/.env.example`:
+
+```bash
+cd api/v1
+cp .env.example .env
+```
+
+Y completá las variables:
+
+```
+MONGO_URI=mongodb://localhost:27017/tienda_ropa
+API_TOKEN=elige-un-valor-secreto-cualquiera
+```
+
+- `MONGO_URI`: cadena de conexión completa a MongoDB, incluyendo la base de datos (`tienda_ropa`).
+- `API_TOKEN`: el valor fijo que la API espera recibir como Bearer token en cada request (ver sección de autenticación más abajo).
 
 ### Cómo ejecutar
 
 ```bash
 cd api/v1
-pip install flask pymongo
+pip install flask pymongo python-dotenv
 python run.py
 ```
 
-El servidor corre en `http://127.0.0.1:5000`. Requiere que `mongod` esté activo y la base `tienda_ropa` cargada (ver sección "Cómo ejecutar" arriba).
+El servidor corre en `http://127.0.0.1:5000`. Requiere que `mongod` esté activo, la base `tienda_ropa` cargada (ver sección "Cómo ejecutar" arriba) y el archivo `.env` configurado.
 
 Todos los endpoints de obtener por id, actualizar y eliminar reciben el `id` del documento como query param (`?id=...`), no como parte de la ruta.
+
+### Autenticación
+
+Todos los endpoints (CRUD de usuarios, marcas, prendas, ventas y los 3 reportes) requieren un header `Authorization` con un Bearer token válido:
+
+```
+Authorization: Bearer <API_TOKEN>
+```
+
+Donde `<API_TOKEN>` es el valor configurado en `.env`. Si el header falta, está mal formado, o el token no coincide, la API responde `401` con:
+
+```json
+{ "errores": "token no valido" }
+```
 
 ### Usuarios
 
