@@ -393,7 +393,6 @@ Top 5 marcas más vendidas con su cantidad de ventas
 
 - **Luis Angel Matarrita Hernandez**
 - **Nicole Angulo Segura**
-- **Nicole Angulo Segura**
 
 
 ## Cómo ejecutar
