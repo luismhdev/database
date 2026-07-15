@@ -119,6 +119,241 @@ Registra cada transacción con datos del usuario y la prenda embebidos directame
 
 ---
 
+## API
+
+Parte 2 del proyecto: una API REST en Python (Flask + PyMongo) que expone la base de datos `tienda_ropa` vía HTTP. El código vive en `api/v1/`.
+
+### Estructura
+
+```
+api/
+  v1/
+    run.py
+    app/
+      index.py
+      __init__.py
+      controllers/
+        usuarios.py
+        marcas.py
+        prendas.py
+        ventas.py
+        reportes.py
+      models/
+        usuario.py
+        marca.py
+        prenda.py
+        venta.py
+```
+
+Cada colección tiene su propio modelo (maneja la conexión y las queries a MongoDB con PyMongo) y su propio controlador (maneja la lógica de los endpoints con Flask). Los reportes agregan datos entre colecciones y viven en `controllers/reportes.py`.
+
+### Cómo ejecutar
+
+```bash
+cd api/v1
+pip install flask pymongo
+python run.py
+```
+
+El servidor corre en `http://127.0.0.1:5000`. Requiere que `mongod` esté activo y la base `tienda_ropa` cargada (ver sección "Cómo ejecutar" arriba).
+
+Todos los endpoints de obtener por id, actualizar y eliminar reciben el `id` del documento como query param (`?id=...`), no como parte de la ruta.
+
+### Usuarios
+
+Obtener todos los usuarios
+- Método: GET
+- URL: http://127.0.0.1:5000/tienda/api/v1/usuarios
+
+Obtener usuario por id
+- Método: GET
+- URL: http://127.0.0.1:5000/tienda/api/v1/usuarios?id=665f1a2b3c4d5e6f7a8b9c0d
+
+Crear usuario
+- Método: POST
+- URL: http://127.0.0.1:5000/tienda/api/v1/usuarios
+- Body:
+```json
+{
+  "nombre": "Andrés",
+  "apellido": "Mora Solano",
+  "email": "andres.mora@gmail.com",
+  "telefono": "8812-3456",
+  "direccion": {
+    "provincia": "San José",
+    "canton": "Escazú",
+    "distrito": "San Rafael"
+  },
+  "activo": true
+}
+```
+
+Actualizar usuario
+- Método: PUT
+- URL: http://127.0.0.1:5000/tienda/api/v1/usuarios?id=665f1a2b3c4d5e6f7a8b9c0d
+- Body:
+```json
+{
+  "telefono": "8899-0000",
+  "activo": false
+}
+```
+
+Eliminar usuario
+- Método: DELETE
+- URL: http://127.0.0.1:5000/tienda/api/v1/usuarios?id=665f1a2b3c4d5e6f7a8b9c0d
+
+### Marcas
+
+Obtener todas las marcas
+- Método: GET
+- URL: http://127.0.0.1:5000/tienda/api/v1/marcas
+
+Obtener marca por id
+- Método: GET
+- URL: http://127.0.0.1:5000/tienda/api/v1/marcas?id=665f1a2b3c4d5e6f7a8b9c0d
+
+Crear marca
+- Método: POST
+- URL: http://127.0.0.1:5000/tienda/api/v1/marcas
+- Body:
+```json
+{
+  "nombre": "Puma",
+  "pais": "Alemania",
+  "descripcion": "Marca deportiva alemana con enfoque en fútbol y running.",
+  "añoFundacion": 1948,
+  "sitioWeb": "https://www.puma.com",
+  "categorias": ["deportiva", "casual"]
+}
+```
+
+Actualizar marca
+- Método: PUT
+- URL: http://127.0.0.1:5000/tienda/api/v1/marcas?id=665f1a2b3c4d5e6f7a8b9c0d
+- Body:
+```json
+{
+  "descripcion": "Descripción actualizada de la marca."
+}
+```
+
+Eliminar marca
+- Método: DELETE
+- URL: http://127.0.0.1:5000/tienda/api/v1/marcas?id=665f1a2b3c4d5e6f7a8b9c0d
+
+### Prendas
+
+Obtener todas las prendas
+- Método: GET
+- URL: http://127.0.0.1:5000/tienda/api/v1/prendas
+
+Obtener prenda por id
+- Método: GET
+- URL: http://127.0.0.1:5000/tienda/api/v1/prendas?id=665f1a2b3c4d5e6f7a8b9c0d
+
+Crear prenda
+- Método: POST
+- URL: http://127.0.0.1:5000/tienda/api/v1/prendas
+- Body:
+```json
+{
+  "nombre": "Gorra Nike Classic99",
+  "descripcion": "Gorra ajustable con logo bordado.",
+  "marca": {
+    "nombre": "Nike",
+    "pais": "Estados Unidos"
+  },
+  "categoria": "Gorra",
+  "genero": "Unisex",
+  "precio": 9500,
+  "tallas": ["Única"],
+  "colores": ["Negro", "Blanco"],
+  "stock": 20
+}
+```
+
+Actualizar prenda
+- Método: PUT
+- URL: http://127.0.0.1:5000/tienda/api/v1/prendas?id=665f1a2b3c4d5e6f7a8b9c0d
+- Body:
+```json
+{
+  "precio": 8900,
+  "stock": 15
+}
+```
+
+Eliminar prenda
+- Método: DELETE
+- URL: http://127.0.0.1:5000/tienda/api/v1/prendas?id=665f1a2b3c4d5e6f7a8b9c0d
+
+### Ventas
+
+Obtener todas las ventas
+- Método: GET
+- URL: http://127.0.0.1:5000/tienda/api/v1/ventas
+
+Obtener venta por id
+- Método: GET
+- URL: http://127.0.0.1:5000/tienda/api/v1/ventas?id=665f1a2b3c4d5e6f7a8b9c0d
+
+Crear venta
+- Método: POST
+- URL: http://127.0.0.1:5000/tienda/api/v1/ventas
+- Body:
+```json
+{
+  "usuario": {
+    "nombre": "Andrés",
+    "apellido": "Mora Solano",
+    "email": "andres.mora@gmail.com"
+  },
+  "prenda": {
+    "nombre": "Camiseta Nike Dri-FIT",
+    "marca": "Nike",
+    "categoria": "Camiseta",
+    "talla": "M",
+    "color": "Negro",
+    "precioUnitario": 22500
+  },
+  "cantidad": 1,
+  "total": 22500,
+  "fecha": "2024-06-01T00:00:00.000Z",
+  "estado": "Completada"
+}
+```
+
+Actualizar venta
+- Método: PUT
+- URL: http://127.0.0.1:5000/tienda/api/v1/ventas?id=665f1a2b3c4d5e6f7a8b9c0d
+- Body:
+```json
+{
+  "estado": "Devuelta"
+}
+```
+
+Eliminar venta
+- Método: DELETE
+- URL: http://127.0.0.1:5000/tienda/api/v1/ventas?id=665f1a2b3c4d5e6f7a8b9c0d
+
+### Reportes
+
+Marcas con al menos una venta
+- Método: GET
+- URL: http://127.0.0.1:5000/tienda/api/v1/reportes/marcas-con-ventas
+
+Prendas vendidas y su cantidad restante en stock
+- Método: GET
+- URL: http://127.0.0.1:5000/tienda/api/v1/reportes/prendas-stock
+
+Top 5 marcas más vendidas con su cantidad de ventas
+- Método: GET
+- URL: http://127.0.0.1:5000/tienda/api/v1/reportes/top-marcas
+
+---
+
 ## Integrantes
 
 - **Luis Angel Matarrita Hernandez**
