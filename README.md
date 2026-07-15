@@ -359,3 +359,43 @@ Top 5 marcas más vendidas con su cantidad de ventas
 - **Luis Angel Matarrita Hernandez**
 - **Nicole Angulo Segura**
 - **Nicole Angulo Segura**
+
+
+## Cómo ejecutar
+
+### Requisitos
+- MongoDB 8.0+
+- mongosh
+
+### 1. Cargar la base de datos
+```bash
+mongosh database/database.js
+```
+
+### 2. Consultar datos manualmente
+```bash
+mongosh
+```
+Una vez dentro de mongosh:
+```js
+use tienda_ropa
+
+// Ver todas las ventas
+db.ventas.find().pretty()
+
+// Ver todas las marcas
+db.marcas.find().pretty()
+
+// Ver todas las prendas
+db.prendas.find().pretty()
+
+// Ver todos los usuarios
+db.usuarios.find().pretty()
+```
+
+### 3. Ver datos visualmente con MongoDB Compass
+- Abrí MongoDB Compass
+- En el campo URI ingresá: `mongodb://localhost:27017`
+- Clic en **Connect**
+- En el panel izquierdo abrí **tienda_ropa**
+- Entrá a cada colección para ver los documentos
