@@ -11,7 +11,7 @@ Proyecto universitario que implementa una base de datos no relacional en MongoDB
 ## Cómo ejecutar
 
 ```bash
-mongosh database/database.js
+mongosh scripts/database.js
 ```
 
 ---
@@ -121,40 +121,39 @@ Registra cada transacción con datos del usuario y la prenda embebidos directame
 
 ## API
 
-Parte 2 del proyecto: una API REST en Python (Flask + PyMongo) que expone la base de datos `tienda_ropa` vía HTTP. El código vive en `api/v1/`.
+Parte 2 del proyecto: una API REST en Python (Flask + PyMongo) que expone la base de datos `tienda_ropa` vía HTTP. El código vive en `API/`.
 
 ### Estructura
 
 ```
-api/
-  v1/
-    .env.example
-    run.py
-    app/
-      index.py
-      __init__.py
-      auth.py
-      controllers/
-        usuarios.py
-        marcas.py
-        prendas.py
-        ventas.py
-        reportes.py
-      models/
-        usuario.py
-        marca.py
-        prenda.py
-        venta.py
+API/
+  .env.example
+  run.py
+  app/
+    index.py
+    __init__.py
+    auth.py
+    controllers/
+      usuarios.py
+      marcas.py
+      prendas.py
+      ventas.py
+      reportes.py
+    models/
+      usuario.py
+      marca.py
+      prenda.py
+      venta.py
 ```
 
-Cada colección tiene su propio modelo (maneja la conexión y las queries a MongoDB con PyMongo) y su propio controlador (maneja la lógica de los endpoints con Flask). Los reportes agregan datos entre colecciones y viven en `controllers/reportes.py`. `auth.py` contiene el middleware de autenticación por Bearer token.
+Cada colección tiene su propio modelo (maneja la conexión y las queries a MongoDB con PyMongo) y su propio controlador (maneja la lógica de los endpoints con Flask). Los reportes agregan datos entre colecciones y viven en `controllers/reportes.py`. `auth.py` contiene el middleware de autenticación por Bearer token, y también deja pasar las peticiones `OPTIONS` (preflight de CORS) que envía el navegador antes de cada request del front-end.
 
 ### Configuración
 
-La API lee su configuración desde un archivo `.env` (no se sube al repo, está en `.gitignore`) ubicado en `api/v1/`. Creá el tuyo a partir de `api/v1/.env.example`:
+La API lee su configuración desde un archivo `.env` (no se sube al repo, está en `.gitignore`) ubicado en `API/`. Creá el tuyo a partir de `API/.env.example`:
 
 ```bash
-cd api/v1
+cd API
 cp .env.example .env
 ```
 
@@ -171,7 +170,7 @@ API_TOKEN=elige-un-valor-secreto-cualquiera
 ### Cómo ejecutar
 
 ```bash
-cd api/v1
+cd API
 pip install flask pymongo python-dotenv
 python run.py
 ```
@@ -389,6 +388,47 @@ Top 5 marcas más vendidas con su cantidad de ventas
 
 ---
 
+## Front-end
+
+Parte 3 del proyecto: un front-end en HTML + CSS + JavaScript vanilla (sin frameworks) que consume la API por Ajax (`fetch`). El código vive en `front-end/`.
+
+### Estructura
+
+```
+front-end/
+  index.html
+  css/
+    styles.css
+  js/
+    config.js
+    api.js
+    app.js
+```
+
+- `config.js`: define `API_BASE_URL`, la única constante que hay que cambiar si la API corre en otro host o puerto.
+- `api.js`: wrapper de `fetch()` que agrega el header `Authorization: Bearer <token>` (leído de `localStorage`) a cada request y normaliza los errores de la API en mensajes legibles.
+- `app.js`: lógica de la interfaz — login, navegación entre vistas, CRUD de prendas y carga de los tres reportes.
+
+### Cómo ejecutar
+
+El front-end es HTML estático, se puede abrir directamente en el navegador o servir con cualquier servidor estático, por ejemplo:
+
+```bash
+cd front-end
+python -m http.server 5500
+```
+
+Y visitar `http://127.0.0.1:5500`. La API debe estar corriendo (ver sección "API" arriba) y `API_BASE_URL` en `front-end/js/config.js` debe apuntar a su URL.
+
+### Funcionalidad
+
+- **Login**: pide el Bearer token y lo guarda en `localStorage` para enviarlo en cada request.
+- **Prendas**: CRUD completo — tabla con listado, formulario para crear/editar, botón para eliminar por fila.
+- **Reportes**: tres vistas de solo lectura, cada una en su propia tabla — Marcas con ventas, Prendas vs Stock y Top 5 marcas.
+- **Errores**: si la API responde con error (por ejemplo, token inválido → `401 { "errores": "token no valido" }`), el mensaje se muestra en un banner en pantalla, no solo en la consola.
+
+---
+
 ## Integrantes
 
 - **Luis Angel Matarrita Hernandez**
@@ -403,7 +443,7 @@ Top 5 marcas más vendidas con su cantidad de ventas
 
 ### 1. Cargar la base de datos
 ```bash
-mongosh database/database.js
+mongosh scripts/database.js
 ```
 
 ### 2. Consultar datos manualmente

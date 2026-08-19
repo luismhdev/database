@@ -9,6 +9,10 @@ API_TOKEN = os.environ["API_TOKEN"]
 def require_token():
     """Middleware global (before_request): exige un header
     Authorization: Bearer <token> valido en cada request a la API."""
+    if request.method == "OPTIONS":
+        # El navegador no envia Authorization en el preflight CORS.
+        return None
+
     auth_header = request.headers.get("Authorization", "")
     scheme, _, token = auth_header.partition(" ")
 

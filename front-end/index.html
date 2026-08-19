@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tienda de Ropa — Panel</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+  <!-- Pantalla de login -->
+  <section id="login-screen" class="login-screen">
+    <form id="login-form" class="login-card">
+      <h1>Tienda de Ropa</h1>
+      <p class="subtitle">Ingresá tu Bearer token para acceder al panel administrativo.</p>
+
+      <label for="token-input">API Token</label>
+      <input type="password" id="token-input" placeholder="Pegá aquí tu token" autocomplete="off" required />
+
+      <button type="submit" class="btn btn-primary">Ingresar</button>
+
+      <p id="login-error" class="error-text hidden"></p>
+    </form>
+  </section>
+
+  <!-- Aplicación principal -->
+  <div id="app-screen" class="app-screen hidden">
+
+    <header class="topbar">
+      <h1>Tienda de Ropa — Panel Administrativo</h1>
+      <button id="logout-btn" class="btn btn-secondary">Cerrar sesión</button>
+    </header>
+
+    <div id="error-banner" class="error-banner hidden"></div>
+
+    <nav class="tabs">
+      <button class="tab-btn active" data-view="prendas">Prendas</button>
+      <button class="tab-btn" data-view="marcas-ventas">Marcas con ventas</button>
+      <button class="tab-btn" data-view="prendas-stock">Prendas vs Stock</button>
+      <button class="tab-btn" data-view="top-marcas">Top 5 marcas</button>
+    </nav>
+
+    <main class="content">
+
+      <!-- Vista: Prendas (CRUD) -->
+      <section id="view-prendas" class="view">
+        <div class="view-header">
+          <h2>Prendas</h2>
+          <button id="btn-nueva-prenda" class="btn btn-primary">+ Agregar prenda</button>
+        </div>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Nombre</th>
+                <th>Marca</th>
+                <th>Categoría</th>
+                <th>Género</th>
+                <th>Precio (₡)</th>
+                <th>Stock</th>
+                <th>Tallas</th>
+                <th>Colores</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="prendas-tbody">
+              <tr><td colspan="9" class="empty-msg">Cargando prendas…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Formulario de prenda (crear/editar) -->
+      <section id="view-prenda-form" class="view hidden">
+        <div class="view-header">
+          <h2 id="prenda-form-title">Nueva prenda</h2>
+        </div>
+
+        <form id="prenda-form" class="form-card">
+          <input type="hidden" id="prenda-id" />
+
+          <div class="form-row">
+            <label for="prenda-nombre">Nombre</label>
+            <input type="text" id="prenda-nombre" required />
+          </div>
+
+          <div class="form-row">
+            <label for="prenda-descripcion">Descripción</label>
+            <textarea id="prenda-descripcion" rows="3"></textarea>
+          </div>
+
+          <div class="form-grid">
+            <div class="form-row">
+              <label for="prenda-marca-nombre">Marca</label>
+              <input type="text" id="prenda-marca-nombre" placeholder="Ej: Nike" required />
+            </div>
+
+            <div class="form-row">
+              <label for="prenda-marca-pais">País de la marca</label>
+              <input type="text" id="prenda-marca-pais" placeholder="Ej: Estados Unidos" />
+            </div>
+          </div>
+
+          <div class="form-grid">
+            <div class="form-row">
+              <label for="prenda-categoria">Categoría</label>
+              <input type="text" id="prenda-categoria" placeholder="Ej: Camiseta" required />
+            </div>
+
+            <div class="form-row">
+              <label for="prenda-genero">Género</label>
+              <select id="prenda-genero">
+                <option value="Masculino">Masculino</option>
+                <option value="Femenino">Femenino</option>
+                <option value="Unisex">Unisex</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-grid">
+            <div class="form-row">
+              <label for="prenda-precio">Precio (₡)</label>
+              <input type="number" id="prenda-precio" min="0" step="1" required />
+            </div>
+
+            <div class="form-row">
+              <label for="prenda-stock">Stock</label>
+              <input type="number" id="prenda-stock" min="0" step="1" required />
+            </div>
+          </div>
+
+          <div class="form-grid">
+            <div class="form-row">
+              <label for="prenda-tallas">Tallas (separadas por coma)</label>
+              <input type="text" id="prenda-tallas" placeholder="S, M, L, XL" />
+            </div>
+
+            <div class="form-row">
+              <label for="prenda-colores">Colores (separados por coma)</label>
+              <input type="text" id="prenda-colores" placeholder="Negro, Blanco" />
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Guardar</button>
+            <button type="button" id="btn-cancelar-prenda" class="btn btn-secondary">Cancelar</button>
+          </div>
+        </form>
+      </section>
+
+      <!-- Vista: Marcas con ventas -->
+      <section id="view-marcas-ventas" class="view hidden">
+        <div class="view-header">
+          <h2>Marcas con al menos una venta</h2>
+        </div>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Marca</th>
+                <th>Total de transacciones</th>
+              </tr>
+            </thead>
+            <tbody id="marcas-ventas-tbody">
+              <tr><td colspan="2" class="empty-msg">Cargando…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Vista: Prendas vs Stock -->
+      <section id="view-prendas-stock" class="view hidden">
+        <div class="view-header">
+          <h2>Prendas vendidas y stock restante</h2>
+        </div>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Prenda</th>
+                <th>Marca</th>
+                <th>Categoría</th>
+                <th>Stock actual</th>
+                <th>Total vendido</th>
+              </tr>
+            </thead>
+            <tbody id="prendas-stock-tbody">
+              <tr><td colspan="5" class="empty-msg">Cargando…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Vista: Top 5 marcas -->
+      <section id="view-top-marcas" class="view hidden">
+        <div class="view-header">
+          <h2>Top 5 marcas más vendidas</h2>
+        </div>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Marca</th>
+                <th>Total de unidades vendidas</th>
+              </tr>
+            </thead>
+            <tbody id="top-marcas-tbody">
+              <tr><td colspan="2" class="empty-msg">Cargando…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

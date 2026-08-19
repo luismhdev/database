@@ -75,6 +75,15 @@ def create_app():
 
     app.before_request(require_token)
 
+    @app.after_request
+    def add_cors_headers(response):
+        """Permite que el front-end (servido desde otro origen) consuma la
+        API por fetch()."""
+        response.headers["Access-Control-Allow-Origin"] = "*"
+        response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+        response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS"
+        return response
+
     from app.index import register_blueprints
 
     register_blueprints(app)
